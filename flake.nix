@@ -36,8 +36,23 @@
   let
     myLib = import ./myLib { inherit inputs; };
 
+    baseConfig = myLib.importUtils.importAll # The configuration to be applied to every host
+    [
+      ./base/core
+      ./base/features
+      ./base/gnome
+      ./base/modules
+      ./base/terminal
+      ./base/baseVars.nix
+
+      ./apps/cli
+      ./apps/gui
+    ];
+
+
     # Declare nixosConfigurations within the let expression so we can reuse it for homeConfigurations
-    nixosConfigurations = builtins.mapAttrs myLib.mkNixos # Run mkNixos for each homeConfiguration, with key passed as host
+    nixosConfigurations = myLib.mkHosts # Create each host with the given base config, plus their custom files in ./hosts
+    baseConfig
     {
       framework.system = "x86_64-linux";
 
@@ -48,9 +63,9 @@
   {
     inherit nixosConfigurations;
 
-    homeConfigurations = builtins.mapAttrs myLib.mkHome # Run mkHome for each homeConfiguration, with key passed as userhost
-    {
-      "emanresu@framework" = { inherit nixosConfigurations; };
-    };
+    # homeConfigurations = builtins.mapAttrs myLib.mkHome # Run mkHome for each homeConfiguration, with key passed as userhost
+    # {
+    #   "emanresu@framework" = { inherit nixosConfigurations; };
+    # };
   };
 }

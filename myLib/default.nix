@@ -9,7 +9,7 @@ in
 {
   importUtils = import ./importUtils.nix { inherit lib myLib; };
 
-  mkNixos = import ./mkNixos.nix { inherit lib myLib inputs; };
+  mkHosts = import ./mkHosts.nix { inherit lib myLib inputs; };
   mkHome = import ./mkHome.nix { inherit lib myLib; };
 
   mkList = attrset: [ attrset ];
