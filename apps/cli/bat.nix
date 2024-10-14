@@ -1,5 +1,24 @@
 { lib, pkgs, ... }:
-
+let
+  robin = pkgs.writeShellApplication
+  {
+    name = "robin";
+    runtimeInputs = with pkgs;
+    [
+      man
+      bat-extras.batman
+    ];
+    text = 
+    ''
+      command_name=$(basename "$0")
+      if man -w "$command_name" > /dev/null 2>&1; then
+        exec batman "$command_name"
+      else
+        exec "$0" "$@"
+      fi
+    '';
+  };
+in
 {
   environment.shellAliases.cat = "bat";
   environment.shellAliases.man = "batman";
